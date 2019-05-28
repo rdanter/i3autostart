@@ -36,3 +36,55 @@
 # Read .desktop files from the system (/etc/xdg/autostart) and user
 # (~/.config/autostart) directories and run services which are enabled.
 
+import configparser
+import os
+
+# Set to True for verbose/debug output
+V=True
+
+# List of places to search for autostart .desktop files
+autostart_dirs = ['/etc/xdg/autostart',
+                  os.environ['HOME'] + '/.config/autostart']
+
+
+def process_desktop_file(f):
+        if V:
+                print("  Processing file:", f)
+
+        # Check we really have a file
+        if not os.path.isfile(f):
+                return
+
+        # Read the file content
+        cfg = configparser.ConfigParser()
+        cfg.read(f)
+
+        # TODO - execute the service
+        if V:
+                print("    Executing:", cfg.get('Desktop Entry', 'Exec'))
+
+
+def process_autostart_dir(d):
+        if V:
+                print("Processing directory:", d)
+
+        # Check directory exists, exit if not
+        if not os.path.isdir(d):
+                return
+
+        # Get a list of entries in the directory and sort them
+        files = os.listdir(d)
+        files.sort()
+
+        for f in files:
+                # Filter out non-.desktop files
+                (p, e) = os.path.splitext(f)
+                if e != '.desktop':
+                        continue
+
+                process_desktop_file(d+'/'+f)
+
+
+### MAIN ###
+for d in autostart_dirs:
+        process_autostart_dir(d)
