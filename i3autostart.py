@@ -38,6 +38,8 @@
 
 import configparser
 import os
+import subprocess
+import time
 
 # Set to True for verbose/debug output
 V=True
@@ -59,10 +61,14 @@ def process_desktop_file(f):
         cfg = configparser.ConfigParser()
         cfg.read(f)
 
-        # TODO - execute the service
+        # Execute the service via system shell
+        cmdline = cfg.get('Desktop Entry', 'Exec')
         if V:
-                print("    Executing:", cfg.get('Desktop Entry', 'Exec'))
+                print("    Executing:", cmdline)
+        subprocess.Popen(cmdline, shell=True)
 
+        # Short delay before starting the next service
+        time.sleep(0.1)
 
 def process_autostart_dir(d):
         if V:
