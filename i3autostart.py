@@ -41,18 +41,11 @@ import os
 import subprocess
 import time
 
-# Set to True for verbose/debug output
-V=True
-
 # List of places to search for autostart .desktop files
 autostart_dirs = ['/etc/xdg/autostart',
                   os.environ['HOME'] + '/.config/autostart']
 
-
 def process_desktop_file(f):
-        if V:
-                print("  Processing file:", f)
-
         # Check we really have a file
         if not os.path.isfile(f):
                 return
@@ -63,17 +56,12 @@ def process_desktop_file(f):
 
         # Execute the service via system shell
         cmdline = cfg.get('Desktop Entry', 'Exec')
-        if V:
-                print("    Executing:", cmdline)
         subprocess.Popen(cmdline, shell=True)
 
         # Short delay before starting the next service
         time.sleep(0.1)
 
 def process_autostart_dir(d):
-        if V:
-                print("Processing directory:", d)
-
         # Check directory exists, exit if not
         if not os.path.isdir(d):
                 return
@@ -89,7 +77,6 @@ def process_autostart_dir(d):
                         continue
 
                 process_desktop_file(d+'/'+f)
-
 
 ### MAIN ###
 for d in autostart_dirs:
